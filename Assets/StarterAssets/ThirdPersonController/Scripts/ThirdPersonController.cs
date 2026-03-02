@@ -29,8 +29,9 @@ namespace StarterAssets
         public float DodgeSpeed = 7f;
 
         [Tooltip("Dodge cooldown in s")]
-        public float DodgeCD = 5f;
+        public static float DodgeCD = 5f;
         public float DodgeTimer = 5f;
+        public float DodgeLockout = DodgeCD + 2f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -234,7 +235,7 @@ namespace StarterAssets
 
             DodgeTimer += Time.deltaTime;
 
-            if(_input.dodge)
+            if(_input.dodge && DodgeTimer > DodgeLockout)
             {
                 if (DodgeTimer > DodgeCD)
                 {
