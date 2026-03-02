@@ -29,9 +29,9 @@ namespace StarterAssets
         public float DodgeSpeed = 7f;
 
         [Tooltip("Dodge cooldown in s")]
-        public static float DodgeCD = 5f;
-        public float DodgeTimer = 5f;
-        public float DodgeLockout = DodgeCD + 2f;
+        public static float DodgeDuration = 0.5f;
+        public float DodgeTimer = 0f;
+        public float DodgeLockout = DodgeDuration + 2f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -189,7 +189,6 @@ namespace StarterAssets
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDDodge = Animator.StringToHash("Dodge");
-
         }
 
         private void GroundedCheck()
@@ -237,20 +236,22 @@ namespace StarterAssets
 
             if(_input.dodge && DodgeTimer > DodgeLockout)
             {
-                if (DodgeTimer > DodgeCD)
+                if (DodgeTimer > DodgeDuration)
                 {
                     isDodging = true;
                     DodgeTimer = 0f;
                 }
             }
 
-            if (isDodging && DodgeTimer < DodgeCD)
+            if (isDodging && DodgeTimer < DodgeDuration)
             {
                 targetSpeed = DodgeSpeed;
+                _animator.SetBool(_animIDDodge, true);
             }
             else 
             { 
-                targetSpeed = MoveSpeed; 
+                targetSpeed = MoveSpeed;
+                _animator.SetBool(_animIDDodge, false);
             }
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
@@ -389,7 +390,7 @@ namespace StarterAssets
         {
             isDodging = true;
             Debug.Log("I am dodging");
-            yield return new WaitForSeconds(DodgeCD);
+            yield return new WaitForSeconds(DodgeDuration);
             isDodging = false;
             Debug.Log("I am not dodging");
         }
