@@ -1,7 +1,10 @@
-﻿ using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
+
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
@@ -17,9 +20,17 @@ namespace StarterAssets
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
+        public float MaxSpeed = 15f;
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
+        public float SprintSpeed = 5f;
+
+        [Tooltip("How much the speed icreases when dodging")]
+        public float DodgeSpeed = 7f;
+
+        [Tooltip("Dodge cooldown in s")]
+        public float DodgeCD = 5f;
+        public float DodgeTimer = 5f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -87,6 +98,7 @@ namespace StarterAssets
         private float _verticalVelocity;
         private float _horizontalVelocity;
         private float _terminalVelocity = 53.0f;
+        private bool isDodging = false;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -98,6 +110,7 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDDodge;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -174,6 +187,8 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDDodge = Animator.StringToHash("Dodge");
+
         }
 
         private void GroundedCheck()
@@ -217,8 +232,27 @@ namespace StarterAssets
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
-            // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+            DodgeTimer += Time.deltaTime;
 
+            if(_input.dodge)
+            {
+                if (DodgeTimer > DodgeCD)
+                {
+                    isDodging = true;
+                    DodgeTimer = 0f;
+                }
+            }
+
+            if (isDodging && DodgeTimer < DodgeCD)
+            {
+                targetSpeed = DodgeSpeed;
+            }
+            else 
+            { 
+                targetSpeed = MoveSpeed; 
+            }
+
+            // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
             if (_input.move == Vector2.zero) targetSpeed = 0.0f;
@@ -232,19 +266,19 @@ namespace StarterAssets
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
-            {
-                // creates curved result rather than a linear one giving a more organic speed change
-                // note T in Lerp is clamped, so we don't need to clamp our speed
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
-                    Time.deltaTime * SpeedChangeRate);
+                {
+                    // creates curved result rather than a linear one giving a more organic speed change
+                    // note T in Lerp is clamped, so we don't need to clamp our speed
+                    _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
+                        Time.deltaTime * SpeedChangeRate);
 
-                // round speed to 3 decimal places
-                _speed = Mathf.Round(_speed * 1000f) / 1000f;
-            }
+                    // round speed to 3 decimal places
+                    _speed = Mathf.Round(_speed * 1000f) / 1000f;
+                }
             else
-            {
-                _speed = targetSpeed;
-            }
+                {
+                    _speed = targetSpeed;
+                }
 
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
@@ -265,12 +299,12 @@ namespace StarterAssets
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
-
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             // move the player
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + 
+            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            Debug.Log("Speed: " + _speed);
 
             // update animator if using character
             if (_hasAnimator)
@@ -349,6 +383,16 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
+
+        private IEnumerator StartDodge()
+        {
+            isDodging = true;
+            Debug.Log("I am dodging");
+            yield return new WaitForSeconds(DodgeCD);
+            isDodging = false;
+            Debug.Log("I am not dodging");
+        }
+
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {

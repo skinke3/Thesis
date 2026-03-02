@@ -12,6 +12,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool dodge;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -42,6 +43,11 @@ namespace StarterAssets
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
+		}
+
+		public void OnDodge(InputValue value)
+		{
+			DodgeInput(value.isPressed);
 		}
 #endif
 
@@ -74,6 +80,11 @@ namespace StarterAssets
 		private void SetCursorState(bool newState)
 		{
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
+		}
+
+		private void DodgeInput(bool newDodgeState)
+		{
+			dodge = newDodgeState;
 		}
 	}
 	
