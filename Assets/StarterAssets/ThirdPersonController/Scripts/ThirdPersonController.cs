@@ -31,7 +31,7 @@ namespace StarterAssets
         [Tooltip("Dodge cooldown in s")]
         public static float DodgeDuration = 0.5f;
         public float DodgeTimer = 0f;
-        public float DodgeLockout = DodgeDuration + 2f;
+        public static float DodgeLockout = DodgeDuration + 2f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -97,7 +97,6 @@ namespace StarterAssets
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
         private float _verticalVelocity;
-        private float _horizontalVelocity;
         private float _terminalVelocity = 53.0f;
         private bool isDodging = false;
 
@@ -306,7 +305,6 @@ namespace StarterAssets
             // move the player
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-            Debug.Log("Speed: " + _speed);
 
             // update animator if using character
             if (_hasAnimator)
@@ -336,7 +334,7 @@ namespace StarterAssets
                     _verticalVelocity = -2f;
                 }
 
-                // Jump
+                //Jump
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
@@ -385,16 +383,6 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
-
-        private IEnumerator StartDodge()
-        {
-            isDodging = true;
-            Debug.Log("I am dodging");
-            yield return new WaitForSeconds(DodgeDuration);
-            isDodging = false;
-            Debug.Log("I am not dodging");
-        }
-
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
