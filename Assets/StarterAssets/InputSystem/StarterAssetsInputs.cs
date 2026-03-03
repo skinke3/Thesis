@@ -1,6 +1,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 #endif
 
 namespace StarterAssets
@@ -8,49 +9,63 @@ namespace StarterAssets
 	public class StarterAssetsInputs : MonoBehaviour
 	{
 		[Header("Character Input Values")]
-		public Vector2 move;
-		public Vector2 look;
-		public bool jump;
-		public bool sprint;
-		public bool dodge;
+		[SerializeField]
+		private Vector2 move;
+        [SerializeField]
+        private Vector2 look;
+        [SerializeField]
+        private bool jump;
+        [SerializeField]
+        private bool sprint;
+        [SerializeField]
+        private bool dodge;
+		[SerializeField]
+		private bool attack;
 
-		[Header("Movement Settings")]
-		public bool analogMovement;
+        [Header("Movement Settings")]
+        [SerializeField]
+        private bool analogMovement;
 
 		[Header("Mouse Cursor Settings")]
-		public bool cursorLocked = true;
-		public bool cursorInputForLook = true;
+        [SerializeField]
+        private bool cursorLocked = true;
+        [SerializeField]
+        public bool cursorInputForLook = true;
 
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+		public void OnMove(InputAction.CallbackContext value)
 		{
-			MoveInput(value.Get<Vector2>());
+			MoveInput(value.ReadValue<Vector2>());
 		}
 
-		public void OnLook(InputValue value)
+		public void OnLook(InputAction.CallbackContext value)
 		{
 			if(cursorInputForLook)
 			{
-				LookInput(value.Get<Vector2>());
+				LookInput(value.ReadValue<Vector2>());
 			}
 		}
 
-		public void OnJump(InputValue value)
+		public void OnJump(InputAction.CallbackContext value)
 		{
-			JumpInput(value.isPressed);
+			JumpInput(value.action.triggered);
 		}
 
-		public void OnSprint(InputValue value)
+		public void OnSprint(InputAction.CallbackContext value)
 		{
-			SprintInput(value.isPressed);
+			SprintInput(value.action.ReadValue<float>() == 1);
 		}
 
-		public void OnDodge(InputValue value)
+		public void OnDodge(InputAction.CallbackContext value)
 		{
-			DodgeInput(value.isPressed);
+			DodgeInput(value.action.triggered);
+		}
+
+		public void OnAttack(InputAction.CallbackContext value)
+		{
+			AttackInput(value.action.triggered);
 		}
 #endif
-
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
@@ -71,8 +86,51 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
+        public void DodgeInput(bool newDodgeState)
+        {
+            dodge = newDodgeState;
+        }
 
-		private void OnApplicationFocus(bool hasFocus)
+        public void AttackInput(bool newAttackState)
+        {
+            attack = newAttackState;
+        }
+
+		public Vector2 GetMove()
+		{
+			return move;
+		}
+
+		public Vector2 GetLook()
+		{
+			return look;
+		}
+
+		public bool IsJumping()
+		{
+			return jump;
+		}
+
+		public bool IsSprinting()
+		{
+			return sprint;
+		}
+
+		public bool IsDodging()
+		{
+			return dodge;
+		}
+		public bool IsAttacking() 
+		{ 
+			return attack; 
+		}
+
+		public bool IsAnalog()
+		{
+			return analogMovement;
+		}
+
+        private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
 		}
@@ -82,10 +140,7 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 
-		private void DodgeInput(bool newDodgeState)
-		{
-			dodge = newDodgeState;
-		}
+		
 	}
 	
 }
