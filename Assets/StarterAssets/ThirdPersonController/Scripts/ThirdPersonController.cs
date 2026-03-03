@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
-#if ENABLE_INPUT_SYSTEM 
+using Unity.VisualScripting;
+
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
@@ -32,6 +34,16 @@ namespace StarterAssets
         public static float DodgeDuration = 0.5f;
         public float DodgeTimer = 0f;
         public static float DodgeLockout = DodgeDuration + 2f;
+
+        [Tooltip("Current number of attack in combo sequence")]
+        private int attackCounter = 0;
+        [Tooltip("Time that an attack combo is active in s")]
+        public float attackTimer = 0f;
+        public float attackMaxTime = 1f;
+        [Tooltip("Maximum attacks in combo")]
+        private int maxCombo = 4;
+        private bool inCombat = false;
+
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -112,6 +124,7 @@ namespace StarterAssets
         private int _animIDMotionSpeed;
         private int _animIDDodge;
         private int _animIDAttack;
+        private int _animIDCombo;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -174,6 +187,7 @@ namespace StarterAssets
             GroundedCheck();
             JumpAndGravity();
             Move();
+            Attack();
         }
 
         private void LateUpdate()
@@ -190,6 +204,7 @@ namespace StarterAssets
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDDodge = Animator.StringToHash("Dodge");
             _animIDAttack = Animator.StringToHash("Attack");
+            _animIDCombo = Animator.StringToHash("Combo");
         }
 
         private void GroundedCheck()
@@ -236,7 +251,7 @@ namespace StarterAssets
 
             DodgeTimer += Time.deltaTime;
 
-            if(_input.IsDodging() && DodgeTimer > DodgeLockout && _input.GetMove() != Vector2.zero)
+            if(_input.IsDodging() && DodgeTimer > DodgeLockout && _input.GetMove() != Vector2.zero && !inCombat)
             {
                 if (DodgeTimer > DodgeDuration)
                 {
@@ -306,8 +321,12 @@ namespace StarterAssets
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
             // move the player
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
+            if(! inCombat)
+            {
+                _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            }
+            
 
             // update animator if using character
             if (_hasAnimator)
@@ -315,16 +334,37 @@ namespace StarterAssets
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
+        }
 
-            if (_input.IsAttacking())
+        private void Attack()
+        {
+            attackTimer += Time.deltaTime;
+
+            if (attackTimer > attackMaxTime)
             {
-                int attackCounter = 0;
-                attackCounter += 1;
-                Debug.Log("Attack: " + _input.IsAttacking());
-                Debug.Log("Attack Counter: " + attackCounter);
-                //_animator.SetTrigger(_animIDAttack);
+                attackCounter = 0;
+                inCombat = false;
+                _animator.SetInteger(_animIDAttack, attackCounter);
+                _animator.SetBool(_animIDCombo, inCombat);
             }
+            if (_input.IsAttacking() && attackCounter <= maxCombo)
+            {
+                inCombat = true;
+                _animator.SetBool(_animIDCombo, inCombat);
+                attackTimer = 0;
+                attackCounter += 1;
+                Debug.Log("attack counter: " + attackCounter);
+                _animator.SetInteger(_animIDAttack, attackCounter);
 
+                if(attackCounter > maxCombo)
+                {
+                    attackCounter = 0;
+                    inCombat = false;
+                    _animator.SetInteger(_animIDAttack, attackCounter);
+                    _animator.SetBool(_animIDCombo, inCombat);
+                }
+
+            }
         }
 
         private void JumpAndGravity()
