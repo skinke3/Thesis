@@ -63,7 +63,7 @@ namespace StarterAssets
 
 		public void OnAttack(InputAction.CallbackContext value)
 		{
-			AttackInput(value.action.triggered);
+			AttackInput(value.started);
 		}
 #endif
 
@@ -121,7 +121,7 @@ namespace StarterAssets
 			return dodge;
 		}
 		public bool IsAttacking() 
-		{ 
+		{
 			return attack; 
 		}
 

@@ -236,7 +236,7 @@ namespace StarterAssets
 
             DodgeTimer += Time.deltaTime;
 
-            if(_input.IsDodging() && DodgeTimer > DodgeLockout)
+            if(_input.IsDodging() && DodgeTimer > DodgeLockout && _input.GetMove() != Vector2.zero)
             {
                 if (DodgeTimer > DodgeDuration)
                 {
@@ -316,9 +316,13 @@ namespace StarterAssets
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
 
-            if(_input.IsAttacking())
+            if (_input.IsAttacking())
             {
-                Debug.Log("attack");
+                int attackCounter = 0;
+                attackCounter += 1;
+                Debug.Log("Attack: " + _input.IsAttacking());
+                Debug.Log("Attack Counter: " + attackCounter);
+                //_animator.SetTrigger(_animIDAttack);
             }
 
         }

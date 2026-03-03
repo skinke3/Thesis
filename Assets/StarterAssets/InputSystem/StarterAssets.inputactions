@@ -12,7 +12,7 @@
                     "id": "6bc1aaf4-b110-4ff7-891e-5b9fe6f32c4d",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": "Press",
+                    "interactions": "",
                     "initialStateCheck": true
                 },
                 {
@@ -57,7 +57,7 @@
                     "id": "6eaa902a-8717-44c5-8a04-d65d1d76002d",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "initialStateCheck": false
                 }
             ],
@@ -252,7 +252,7 @@
                 {
                     "name": "",
                     "id": "a148d6c0-d4a6-49f4-86d3-7bd0f190b0d7",
-                    "path": "<Keyboard>/enter",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardMouse",
