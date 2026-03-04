@@ -25,12 +25,14 @@ public class DamageDealerScript : MonoBehaviour
         if (canDealDamage)
         {
             RaycastHit hit;
-            int layerMask = 1 << 9;
+
+            int layerMask = 1 << 6;
+
             if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
             {
                 if(!hasDealtDamage.Contains(hit.transform.gameObject))
                 {
-                    print("damage");
+                    Debug.Log("Damage");
                     hasDealtDamage.Add(hit.transform.gameObject);
                 }
             }
