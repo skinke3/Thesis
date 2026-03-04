@@ -30,9 +30,9 @@ public class DamageDealerScript : MonoBehaviour
 
             if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
             {
-                if(!hasDealtDamage.Contains(hit.transform.gameObject))
+                if(hit.transform.TryGetComponent(out EnemyController enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
                 {
-                    Debug.Log("Damage");
+                    enemy.TakeDamage(weaponDamage);
                     hasDealtDamage.Add(hit.transform.gameObject);
                 }
             }
