@@ -1126,6 +1126,8 @@ MonoBehaviour:
   SprintSpeed: 5.335
   DodgeSpeed: 10
   DodgeTimer: 0
+  attackTimer: 0
+  attackMaxTime: 1
   RotationSmoothTime: 0.12
   SpeedChangeRate: 10
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
@@ -1150,7 +1152,7 @@ MonoBehaviour:
   GroundedRadius: 0.28
   GroundLayers:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 1
   CinemachineCameraTarget: {fileID: 8338988566280778634}
   TopClamp: 70
   BottomClamp: -30
