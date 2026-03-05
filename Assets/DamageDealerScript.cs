@@ -11,7 +11,6 @@ public class DamageDealerScript : MonoBehaviour
     [SerializeField] float weaponLength;
     [SerializeField] float weaponDamage;
 
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

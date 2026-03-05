@@ -336,6 +336,7 @@ GameObject:
   - component: {fileID: 8548923231890071291}
   - component: {fileID: 627651008499848508}
   - component: {fileID: 2721806121430175226}
+  - component: {fileID: 513615417675305054}
   m_Layer: 8
   m_Name: CompanionArmature
   m_TagString: Player
@@ -621,6 +622,19 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &513615417675305054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393460223596487564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4b6c263fbcee8419cc106deb21cfcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Equipped
+  weapon: {fileID: 3923586337138025438}
 --- !u!1 &1489249549069145502
 GameObject:
   m_ObjectHideFlags: 0
@@ -2929,6 +2943,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 99e6018c38ba4494895be2c2618ca347, type: 3}
+--- !u!1 &3923586337138025438 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7897619173796198160, guid: 99e6018c38ba4494895be2c2618ca347, type: 3}
+  m_PrefabInstance: {fileID: 6623275766771586254}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4147604938785509035 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7090313433184787045, guid: 99e6018c38ba4494895be2c2618ca347, type: 3}

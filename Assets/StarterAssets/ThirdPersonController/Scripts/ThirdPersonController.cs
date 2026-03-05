@@ -36,7 +36,7 @@ namespace StarterAssets
         public static float DodgeLockout = DodgeDuration + 2f;
 
         [Tooltip("Current number of attack in combo sequence")]
-        private int attackCounter = 0;
+        [HideInInspector] public int attackCounter = 0;
         [Tooltip("Time that an attack combo is active in s")]
         public float attackTimer = 0f;
         public float attackMaxTime = 1f;
@@ -364,6 +364,15 @@ namespace StarterAssets
                     _animator.SetBool(_animIDCombo, inCombat);
                 }
 
+                else if (_input.IsDodging())
+                {
+                    Debug.Log(_input.IsDodging());
+                    attackCounter = 0;
+                    inCombat = false;
+                    _animator.SetInteger(_animIDAttack, attackCounter);
+                    _animator.SetBool(_animIDCombo, inCombat);
+                    _animator.SetBool(_animIDDodge, true);
+                }
             }
         }
 
