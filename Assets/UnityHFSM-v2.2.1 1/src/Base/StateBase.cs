@@ -8,7 +8,7 @@ namespace UnityHFSM
 	/// </summary>
 	public class StateBase<TStateId> : IVisitableState
 	{
-		public readonly bool needsExitTime;
+		public bool needsExitTime;
 		public readonly bool isGhostState;
 		public TStateId name;
 
