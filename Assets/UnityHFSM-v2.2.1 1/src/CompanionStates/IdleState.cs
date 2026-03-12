@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityHFSM;
 
 
 namespace CompanionAI.FSM

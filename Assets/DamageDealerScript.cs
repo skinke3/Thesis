@@ -2,57 +2,62 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class DamageDealerScript : MonoBehaviour
+
+namespace CompanionAI.FSM
 {
-
-    bool canDealDamage = false;
-    List<GameObject> hasDealtDamage;
-
-    [SerializeField] float weaponLength;
-    [SerializeField] float weaponDamage;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class DamageDealerScript : MonoBehaviour
     {
-        canDealDamage = false;
-        hasDealtDamage = new List<GameObject>();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (canDealDamage)
+        bool canDealDamage = false;
+        List<GameObject> hasDealtDamage;
+
+        [SerializeField] float weaponLength;
+        [SerializeField] float weaponDamage;
+
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
         {
-            RaycastHit hit;
+            canDealDamage = false;
+            hasDealtDamage = new List<GameObject>();
+        }
 
-            int layerMask = 1 << 6;
-
-            if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
+        // Update is called once per frame
+        void Update()
+        {
+            if (canDealDamage)
             {
-                if(hit.transform.TryGetComponent(out EnemyController enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
+                RaycastHit hit;
+
+                int layerMask = 1 << 6;
+
+                if (Physics.Raycast(transform.position, -transform.up, out hit, weaponLength, layerMask))
                 {
-                    enemy.TakeDamage(weaponDamage);
-                    hasDealtDamage.Add(hit.transform.gameObject);
+                    if (hit.transform.TryGetComponent(out EnemyController enemy) && !hasDealtDamage.Contains(hit.transform.gameObject))
+                    {
+                        enemy.TakeDamage(weaponDamage);
+                        hasDealtDamage.Add(hit.transform.gameObject);
+                    }
                 }
             }
         }
-    }
 
-    public void StartDealDamage()
-    {
-        canDealDamage = true;
-        hasDealtDamage.Clear();
-    }
+        public void StartDealDamage()
+        {
+            canDealDamage = true;
+            hasDealtDamage.Clear();
+        }
 
-    public void EndDealDamage()
-    {
-        canDealDamage = false;
-    }
+        public void EndDealDamage()
+        {
+            canDealDamage = false;
+        }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position - transform.up * weaponLength);
-    }
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(transform.position, transform.position - transform.up * weaponLength);
+        }
 
+    }
 }
+

@@ -4,18 +4,22 @@ using System.Collections.Generic;
 
 // This script is being called from the animator that this script is attached to
 
-public class Equipped : MonoBehaviour
+namespace CompanionAI.FSM
 {
-    [SerializeField] GameObject weapon;
-
-    public void StartDealDamage()
+    public class Equipped : MonoBehaviour
     {
-        weapon.GetComponentInChildren<DamageDealerScript>().StartDealDamage();
-    }
+        [SerializeField] GameObject weapon;
 
-    public void EndDealDamage()
-    {
-        weapon.GetComponentInChildren<DamageDealerScript>().EndDealDamage();
-    }
+        public void StartDealDamage()
+        {
+            weapon.GetComponentInChildren<DamageDealerScript>().StartDealDamage();
+        }
 
+        public void EndDealDamage()
+        {
+            weapon.GetComponentInChildren<DamageDealerScript>().EndDealDamage();
+        }
+    }
 }
+
+

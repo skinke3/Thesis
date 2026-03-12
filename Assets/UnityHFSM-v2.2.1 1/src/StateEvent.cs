@@ -2,7 +2,8 @@ namespace CompanionAI.FSM
 {
     public enum StateEvent
     {
-        DetectProjectile
+        DetectProjectile,
+        LostProjectile
     }
 }
 
