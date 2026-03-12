@@ -22,7 +22,7 @@ namespace CompanionAI.FSM
             Companion Companion, 
             float ExitTime = 0.1f, 
             Action<State<CompanionState, StateEvent>> onEnter = null,
-            Action<State<CompanionState, StateEvent>> onlogic = null,
+            Action<State<CompanionState, StateEvent>> onLogic = null,
             Action<State<CompanionState, StateEvent>> onExit = null,
             Func<State<CompanionState, StateEvent>, bool> canExit = null)
         {

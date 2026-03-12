@@ -14,9 +14,9 @@ namespace CompanionAI.FSM
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other) //.TryGetComponent(out Projectile projectile)
+            if (other.TryGetComponent(out Projectile projectile))
             {
-                OnProjectileEnter?.Invoke(other.transform); //projectile
+                OnProjectileEnter?.Invoke(projectile.transform);
                 Debug.Log("Projectile Entered");
             }
         }
@@ -26,7 +26,7 @@ namespace CompanionAI.FSM
             if (other.TryGetComponent(out Projectile projectile))
             {
                 OnProjectileExit?.Invoke(other.transform.position);
-                Debug.Log("Projectile Exit");
+                Debug.Log("Projectile Entered");
             }
         }
     }
