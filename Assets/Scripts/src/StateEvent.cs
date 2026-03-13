@@ -5,7 +5,11 @@ namespace CompanionAI.FSM
         DetectProjectile,
         LostProjectile,
         DetectTarget,
-        LostTarget
+        LostTarget,
+        AttackOpen,
+        AttackClose,
+        PatrolOpen,
+        PatrolClose
     }
 }
 
