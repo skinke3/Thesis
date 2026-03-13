@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace StarterAssets
+namespace CompanionAI.FSM
 {
     public class UICanvasControllerInput : MonoBehaviour
     {

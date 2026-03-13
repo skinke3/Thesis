@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 #endif
 
-namespace StarterAssets
+namespace CompanionAI.FSM
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{

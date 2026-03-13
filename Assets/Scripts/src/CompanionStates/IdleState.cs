@@ -12,7 +12,7 @@ namespace CompanionAI.FSM
         {
             base.OnEnter();
             Agent.isStopped = true;
-            Animator.Play("Idle_1H");
+            Animator.SetFloat("Speed", 0f);
         }
     }
 }

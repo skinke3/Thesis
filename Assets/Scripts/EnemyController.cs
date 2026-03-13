@@ -1,4 +1,3 @@
-using StarterAssets;
 using Unity.VisualScripting;
 using UnityEngine;
 

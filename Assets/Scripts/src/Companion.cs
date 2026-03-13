@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityHFSM;
 using UnityEngine.AI;
+using UnityEditor.Build;
 
 namespace CompanionAI.FSM
 {
@@ -9,7 +10,12 @@ namespace CompanionAI.FSM
     {
         [Header("References")]
         [SerializeField]
+        private GameObject player;
+        [SerializeField]
         private GameObject target;
+        [SerializeField]
+        private Pathing path;
+        
 
         [Header("Sensors")]
         [SerializeField]
@@ -20,7 +26,7 @@ namespace CompanionAI.FSM
         [Header("Dodge Config")]
         [SerializeField]
         private float DodgeCooldown = 2;
-        private float LastDodgeTime = 0;
+        
 
         [Space]
         [Header("DebugInfo")]
@@ -28,20 +34,25 @@ namespace CompanionAI.FSM
         private bool isInDodgeRange;
         [SerializeField]
         private bool isInChaseRange;
+        [SerializeField]
+        private float LastDodgeTime;
 
         private StateMachine<CompanionState, StateEvent> CompanionFSM;
         private Animator Animator;
         private NavMeshAgent Agent;
+        private ThirdPersonController playerScript;
 
         private void Awake()
         {
             Animator = GetComponent<Animator>();
             Agent = GetComponent<NavMeshAgent>();
             CompanionFSM = new StateMachine<CompanionState, StateEvent>();
+            playerScript = player.GetComponent<ThirdPersonController>();
+            
 
             // Add all states
             CompanionFSM.AddState(CompanionState.Idle, new IdleState(false, this));
-            CompanionFSM.AddState(CompanionState.Patrol, new PatrolState(true, this, target.transform));
+            CompanionFSM.AddState(CompanionState.Patrol, new PatrolState(true, this, target.transform, path));
             CompanionFSM.AddState(CompanionState.Attack, new AttackState(true, this, OnAttack));
             CompanionFSM.AddState(CompanionState.Dodge, new DodgeState(true, this, OnDodge));
 
