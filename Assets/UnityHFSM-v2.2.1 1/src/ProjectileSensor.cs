@@ -14,9 +14,9 @@ namespace CompanionAI.FSM
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out Projectile projectile))
+            if (other.gameObject.layer == LayerMask.NameToLayer("Projectile"))
             {
-                OnProjectileEnter?.Invoke(projectile.transform);
+                OnProjectileEnter?.Invoke(other.transform);
                 Debug.Log("Projectile Entered");
             }
         }

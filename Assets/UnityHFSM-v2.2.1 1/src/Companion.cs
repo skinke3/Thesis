@@ -14,6 +14,8 @@ namespace CompanionAI.FSM
         [Header("Sensors")]
         [SerializeField]
         private ProjectileSensor ProjectileSensor;
+        [SerializeField]
+        private TargetSensor TargetSensor;
 
         [Header("Dodge Config")]
         [SerializeField]
@@ -24,15 +26,17 @@ namespace CompanionAI.FSM
         [Header("DebugInfo")]
         [SerializeField]
         private bool isInDodgeRange;
+        [SerializeField]
+        private bool isInChaseRange;
 
         private StateMachine<CompanionState, StateEvent> CompanionFSM;
-        private Animator animator;
-        private NavMeshAgent agent;
+        private Animator Animator;
+        private NavMeshAgent Agent;
 
         private void Awake()
         {
-            animator = GetComponent<Animator>();
-            agent = GetComponent<NavMeshAgent>();
+            Animator = GetComponent<Animator>();
+            Agent = GetComponent<NavMeshAgent>();
             CompanionFSM = new StateMachine<CompanionState, StateEvent>();
 
             // Add all states
@@ -42,13 +46,18 @@ namespace CompanionAI.FSM
             CompanionFSM.AddState(CompanionState.Dodge, new DodgeState(true, this, OnDodge));
 
             // Add transitions
-            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Idle, CompanionState.Dodge, ShouldDodge, forceInstantly: true));
-            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Dodge, ShouldDodge, forceInstantly: true));
+            CompanionFSM.AddTriggerTransition(StateEvent.DetectTarget, new Transition<CompanionState>(CompanionState.Idle, CompanionState.Patrol));
+            CompanionFSM.AddTriggerTransition(StateEvent.DetectProjectile, new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Idle));
 
-            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Dodge, CompanionState.Idle, ShouldDodge));
-            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Dodge, CompanionState.Patrol, ShouldDodge));
+            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Idle, CompanionState.Patrol, (transition) => isInChaseRange && Vector3.Distance(target.transform.position, transform.position) > Agent.stoppingDistance));
+            CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Idle, (transition) => !isInChaseRange || Vector3.Distance(target.transform.position, transform.position) <= Agent.stoppingDistance));
 
 
+            //CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Idle, CompanionState.Dodge, ShouldDodge, forceInstantly: true));
+            //CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Dodge, ShouldDodge, forceInstantly: true));
+
+            //CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Dodge, CompanionState.Idle, ShouldDodge));
+            //CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Dodge, CompanionState.Patrol, ShouldDodge));
 
             //CompanionFSM.SetStartState(CompanionState.Idle);
 
@@ -57,8 +66,10 @@ namespace CompanionAI.FSM
 
         private void Start()
         {
-            ProjectileSensor.OnProjectileEnter += ProjectileSensor_OnProjectileEnter; 
-            ProjectileSensor.OnProjectileExit += ProjectileSensor_OnProjectileExit;
+            //ProjectileSensor.OnProjectileEnter += ProjectileSensor_OnProjectileEnter; 
+            //ProjectileSensor.OnProjectileExit += ProjectileSensor_OnProjectileExit;
+            TargetSensor.OnTargetEnter += TargetSensor_OnTargetEnter;
+            TargetSensor.OnTargetExit += TargetSensor_OnTargetExit;
         }
 
         private void ProjectileSensor_OnProjectileEnter(Transform Projectile)
@@ -71,6 +82,18 @@ namespace CompanionAI.FSM
         {
             CompanionFSM.Trigger(StateEvent.LostProjectile);
             isInDodgeRange = false;
+        }
+
+        private void TargetSensor_OnTargetEnter(Transform target)
+        {
+            CompanionFSM.Trigger(StateEvent.DetectTarget);
+            isInChaseRange = true;
+        }
+
+        private void TargetSensor_OnTargetExit(Vector3 lastKnownPosition)
+        {
+            CompanionFSM.Trigger(StateEvent.LostTarget);
+            isInChaseRange = false;
         }
 
         private void OnAttack(State<CompanionState, StateEvent> State) { }
