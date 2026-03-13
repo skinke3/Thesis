@@ -58,7 +58,7 @@ namespace CompanionAI.FSM
 
             // Add transitions
             CompanionFSM.AddTriggerTransition(StateEvent.DetectTarget, new Transition<CompanionState>(CompanionState.Idle, CompanionState.Patrol));
-            CompanionFSM.AddTriggerTransition(StateEvent.DetectProjectile, new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Idle));
+            CompanionFSM.AddTriggerTransition(StateEvent.LostTarget, new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Idle));
 
             CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Idle, CompanionState.Patrol, (transition) => isInChaseRange && Vector3.Distance(target.transform.position, transform.position) > Agent.stoppingDistance));
             CompanionFSM.AddTransition(new Transition<CompanionState>(CompanionState.Patrol, CompanionState.Idle, (transition) => !isInChaseRange || Vector3.Distance(target.transform.position, transform.position) <= Agent.stoppingDistance));

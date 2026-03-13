@@ -21,7 +21,8 @@ namespace CompanionAI.FSM
             base.OnEnter();
             Agent.enabled = true;
             Agent.isStopped = false;
-            Agent.SetDestination(path.GetCurrentWayPoint());
+            Animator.Play("Sprint_Forward");
+            //Agent.SetDestination(path.GetCurrentWayPoint());
         }
 
         public override void OnLogic()
@@ -29,19 +30,19 @@ namespace CompanionAI.FSM
             base.OnLogic();
             if (!RequestedExit)
             {
-                if (Agent.remainingDistance <= Agent.stoppingDistance)
-                {
-                    Agent.SetDestination(path.GetNextWayPoint());
-                }
-                float normalizedSpeed = Mathf.InverseLerp(0f, Agent.speed, Agent.velocity.magnitude);
-                Animator.SetFloat("Speed", normalizedSpeed);
-                //Agent.SetDestination(singleTarget.position);
+                //if (Agent.remainingDistance <= Agent.stoppingDistance)
+                //{
+                //    Agent.SetDestination(path.GetNextWayPoint());
+                //}
+                //float normalizedSpeed = Mathf.InverseLerp(0f, Agent.speed, Agent.velocity.magnitude);
+                //Animator.SetFloat("Speed", normalizedSpeed);
+                Agent.SetDestination(singleTarget.position);
             }
-            //else if (Agent.remainingDistance <= Agent.stoppingDistance) 
-            //{
-            //    // In case that we were requested to exit, we will continue moving to the last known position prior to transitioning out to idle
-            //    fsm.StateCanExit();
-            //}
+            else if (Agent.remainingDistance <= Agent.stoppingDistance)
+            {
+                // In case that we were requested to exit, we will continue moving to the last known position prior to transitioning out to idle
+                fsm.StateCanExit();
+            }
         }
 
     }
