@@ -5,5 +5,6 @@ using Unity.Behavior;
 public enum State
 {
 	Idle,
-	Patrol
+	Patrol,
+	Dodge
 }
